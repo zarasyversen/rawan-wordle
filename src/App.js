@@ -18,6 +18,7 @@ import { FaBackspace } from 'react-icons/fa';
 import './App.css';
 import { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal';
+import { WORDS } from "./words.js";
 
 const API_URL = 'https://api.dictionaryapi.dev/api/v2/entries/en';
 
@@ -50,7 +51,7 @@ const fetchWord = (word) => {
 };
 
 function App() {
-  const wordOfTheDay = 'money';
+  const wordOfTheDay = WORDS[Math.floor(Math.random() * WORDS.length)];
 
   const [guesses, setGuesses] = useState({ ...newGame });
   const [markers, setMarkers] = useState({

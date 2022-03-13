@@ -52,6 +52,7 @@ export const Tile = styled.div`
   font-weight: bold;
   line-height: 3.2rem;
   text-transform: uppercase;
+  transition: background-color .3s;
   ${({ hint }) => {
     if (hint === 'green') {
       return `background-color: #6aaa64;`
