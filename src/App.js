@@ -2,6 +2,7 @@ import {
   Header,
   Game,
   GameSection,
+  WordError,
   TileContainer,
   TileRow,
   Tile,
@@ -46,8 +47,8 @@ const fetchWord = (word) => {
     method: 'GET',
   })
     .then((res) => res.json())
-    .then((res) => res)
-    .catch((err) => console.log('err:', err));
+    .then((res) => Array.isArray(res))
+    .catch((err) => {console.log('err:', err)});
 };
 
 function App() {
@@ -64,6 +65,10 @@ function App() {
   });
   const [isModalVisible, setModalVisible] = useState(false);
   const [isShared, setIsShared] = useState(false);
+  const [isErrorVisible, setErrorVisible] = useState(false);
+  const [correctLetters, setCorrectLetters] = useState([]);
+  const [presentLetters, setPresentLetters] = useState([]);
+  const [absentLetters, setAbsentLetters] = useState([]);
 
   let letterIndex = useRef(0);
   let round = useRef(0);
@@ -91,6 +96,7 @@ function App() {
       if (guessedLetter === letter) {
         updatedMarkers[_round][index] = 'green';
         tempWord[index] = '';
+        setCorrectLetters(correctLetters => [...correctLetters, letter]);
       } else {
         // We will use this to mark other letters for hints
         leftoverIndices.push(index);
@@ -116,9 +122,11 @@ function App() {
           // Mark yellow when letter is in the word of the day but in the wrong spot
           updatedMarkers[_round][index] = 'yellow';
           tempWord[correctPositionOfLetter] = '';
+          setPresentLetters(presentLetters => [...presentLetters, guessedLetter]);
         } else {
           // This means the letter is not in the word of the day.
           updatedMarkers[_round][index] = 'grey';
+          setAbsentLetters(absentLetters => [...absentLetters, guessedLetter]);
         }
       });
     }
@@ -161,9 +169,10 @@ function App() {
   const enterGuess = async (pressedKey) => {
     if (pressedKey === 'enter' && !guesses[round.current].includes('')) {
       const validWord = await fetchWord(guesses[round.current].join(''));
-
-      if (Array.isArray(validWord)) {
+      if (validWord) {
         submit();
+      } else {
+        handleValidation();
       }
     } else if (pressedKey === 'backspace') {
       erase();
@@ -171,6 +180,18 @@ function App() {
       publish(pressedKey);
     }
   };
+
+  const handleValidation = () => {
+    const reset = guesses;
+    reset[round.current] = Array.from({ length: wordLength }).fill('');
+    setErrorVisible(true);
+
+    setTimeout(() => {
+      setErrorVisible(false);
+      setGuesses({...reset});
+      letterIndex.current = 0;
+    }, 1500);
+  }
 
   const getDayOfYear = () => {
     const now = new Date();
@@ -182,7 +203,6 @@ function App() {
 
   const handleClick = (key) => {
     const pressedKey = key.toLowerCase();
-
     enterGuess(pressedKey);
   };
 
@@ -224,6 +244,20 @@ function App() {
     }
   };
 
+  const getType = (key) => {
+    if (correctLetters.length && correctLetters.includes(key)) {
+      return 'green';
+    }
+    if (presentLetters.length && presentLetters.includes(key)) {
+      return 'yellow';
+    }
+    if (absentLetters.length && absentLetters.includes(key)) {
+      return 'grey';
+    }
+
+    return '';
+  }
+
   useEffect(() => {
     Modal.setAppElement('#share');
 
@@ -235,8 +269,12 @@ function App() {
   return (
     <>
       <Header>WORDLE</Header>
+      
       <Game>
         <GameSection>
+          {isErrorVisible && 
+            <WordError>Oops, not a word boo..</WordError>
+          }
           <TileContainer>
             {Object.values(guesses).map((word, wordIndex) => (
               <TileRow key={wordIndex}>
@@ -258,6 +296,7 @@ function App() {
                   key={key}
                   onClick={() => handleClick(key)}
                   flex={['enter', 'backspace'].includes(key) ? 1.5 : 1}
+                  type={getType(key)}
                 >
                   {key === 'backspace' ? <FaBackspace /> : key}
                 </KeyboardButton>

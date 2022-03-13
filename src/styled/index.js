@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const Header = styled.header`
   display: flex;
@@ -11,7 +11,7 @@ export const Header = styled.header`
   font-size: 3.6rem;
   letter-spacing: 0.2rem;
   text-transform: uppercase;
-`
+`;
 
 export const Game = styled.div`
   width: 100%;
@@ -20,7 +20,7 @@ export const Game = styled.div`
   height: calc(100vh - 50px);
   display: flex;
   flex-direction: column;
-`
+`;
 
 export const GameSection = styled.section`
   display: flex;
@@ -28,7 +28,18 @@ export const GameSection = styled.section`
   align-items: center;
   flex-grow: 1;
   overflow: hidden;
-`
+  position: relative;
+`;
+export const WordError = styled.div`
+  position: absolute;
+  top: 50px;
+  left: auto;
+  right: auto;
+  background: black;
+  padding: 5px 10px;
+  color: white;
+  border-radius: 4px;
+`;
 export const TileContainer = styled.div`
   display: grid;
   grid-template-rows: repeat(6, 1fr);
@@ -37,12 +48,12 @@ export const TileContainer = styled.div`
   box-sizing: border-box;
   width: 350px;
   height: 420px;
-`
+`;
 export const TileRow = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 5px;
-`
+`;
 export const Tile = styled.div`
   display: inline-flex;
   justify-content: center;
@@ -52,27 +63,27 @@ export const Tile = styled.div`
   font-weight: bold;
   line-height: 3.2rem;
   text-transform: uppercase;
-  transition: background-color .3s;
+  transition: background-color 0.3s;
   ${({ hint }) => {
     if (hint === 'green') {
-      return `background-color: #6aaa64;`
+      return `background-color: #6aaa64;`;
     }
     if (hint === 'yellow') {
-      return `background-color: #b59f3b;`
+      return `background-color: #b59f3b;`;
     }
     if (hint === 'grey') {
-      return `background-color: #3a3a3c;`
+      return `background-color: #3a3a3c;`;
     }
   }}
   user-select: none;
-`
+`;
 
 export const KeyboardSection = styled.section`
   height: 200px;
   width: 100%;
   display: flex;
   flex-direction: column;
-`
+`;
 
 export const KeyboardRow = styled.div`
   width: 100%;
@@ -80,7 +91,7 @@ export const KeyboardRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-around;
-`
+`;
 
 export const KeyboardButton = styled.button`
   display: flex;
@@ -101,15 +112,26 @@ export const KeyboardButton = styled.button`
   &:last-of-type {
     margin: 0;
   }
-`
+  ${({ type }) => {
+    if (type === 'green') {
+      return `background-color: #6aaa64;`;
+    }
+    if (type === 'yellow') {
+      return `background-color: #b59f3b;`;
+    }
+    if (type === 'grey') {
+      return `background-color: #3a3a3c;`;
+    }
+  }}
+`;
 
 export const Flex = styled.div`
   ${({ item }) => `flex: ${item};`}
-`
+`;
 
 export const ShareModal = styled.div`
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
-`
+`;
 
 export const ShareButton = styled.button`
   font-size: 18px;
@@ -120,7 +142,7 @@ export const ShareButton = styled.button`
   &:hover {
     background-color: #818384;
   }
-`
+`;
 
 export const Heading = styled.h2`
   border-bottom: 1px solid #3a3a3c;
@@ -129,11 +151,11 @@ export const Heading = styled.h2`
   font-size: 3.6rem;
   letter-spacing: 0.2rem;
   text-transform: uppercase;
-`
+`;
 
 export const Row = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin: 16px auto;
-`
+`;
