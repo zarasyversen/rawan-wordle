@@ -13,9 +13,11 @@ import {
   ShareModal,
   Heading,
   Row,
+  ModalHeader,
+  ModalCloseButton,
   ShareButton,
 } from './styled';
-import { FaBackspace } from 'react-icons/fa';
+import { FaBackspace, FaTimes } from 'react-icons/fa';
 import './App.css';
 import { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal';
@@ -32,6 +34,7 @@ const keyboardRows = [
 const allKeys = keyboardRows.flat();
 
 const wordLength = 5;
+const allowedGuesses = 6;
 
 const newGame = {
   0: Array.from({ length: wordLength }).fill(''),
@@ -52,7 +55,8 @@ const fetchWord = (word) => {
 };
 
 function App() {
-  const wordOfTheDay = WORDS[Math.floor(Math.random() * WORDS.length)];
+  const wordOfTheDay = 'money';
+  // const wordOfTheDay = WORDS[Math.floor(Math.random() * WORDS.length)];
 
   const [guesses, setGuesses] = useState({ ...newGame });
   const [markers, setMarkers] = useState({
@@ -69,6 +73,7 @@ function App() {
   const [correctLetters, setCorrectLetters] = useState([]);
   const [presentLetters, setPresentLetters] = useState([]);
   const [absentLetters, setAbsentLetters] = useState([]);
+  const [winner, setWinner] = useState(false);
 
   let letterIndex = useRef(0);
   let round = useRef(0);
@@ -78,9 +83,13 @@ function App() {
     setModalVisible(true);
   };
 
+  const lose = () => {
+    document.removeEventListener('keydown', handleKeyDown);
+    setModalVisible(true);
+  };
+
   const submit = () => {
     const _round = round.current;
-
     const updatedMarkers = {
       ...markers,
     };
@@ -105,9 +114,11 @@ function App() {
 
     if (updatedMarkers[_round].every((guess) => guess === 'green')) {
       setMarkers(updatedMarkers);
+      setWinner(true);
       win();
       return;
     }
+    
 
     // Then find the letters in wrong spots
     if (leftoverIndices.length) {
@@ -134,6 +145,12 @@ function App() {
     setMarkers(updatedMarkers);
     round.current = _round + 1;
     letterIndex.current = 0;
+
+    if (round.current === allowedGuesses) {
+      lose();
+      setWinner(false);
+      return;
+    }
   };
 
   const erase = () => {
@@ -167,6 +184,8 @@ function App() {
   };
 
   const enterGuess = async (pressedKey) => {
+  
+
     if (pressedKey === 'enter' && !guesses[round.current].includes('')) {
       const validWord = await fetchWord(guesses[round.current].join(''));
       if (validWord) {
@@ -323,13 +342,28 @@ function App() {
           contentLabel="Share"
         >
           <ShareModal>
-            <Heading>You win!</Heading>
+            <ModalHeader>
+              <ModalCloseButton onClick={() => setModalVisible(false)}>
+                <span className="sr-only">Close</span>
+                <FaTimes />
+              </ModalCloseButton>
+            </ModalHeader>
+            {winner ? 
+              <>
+              <Heading>You win!</Heading>
+              <Row>
+                <h3>Share</h3>
+                <ShareButton onClick={copyMarkers} disabled={isShared}>
+                  {isShared ? 'Copied!' : 'Share'}
+                </ShareButton>
+              </Row>
+              </>
+            : <>
+            <Heading>You lose!</Heading>
             <Row>
-              <h3>Share</h3>
-              <ShareButton onClick={copyMarkers} disabled={isShared}>
-                {isShared ? 'Copied!' : 'Share'}
-              </ShareButton>
+              <h3>Correct word was {wordOfTheDay.toUpperCase()}</h3>
             </Row>
+            </>}
           </ShareModal>
         </Modal>
       </div>

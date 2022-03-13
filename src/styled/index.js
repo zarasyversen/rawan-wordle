@@ -129,6 +129,17 @@ export const Flex = styled.div`
   ${({ item }) => `flex: ${item};`}
 `;
 
+export const ModalHeader = styled.header`
+  display: flex;
+`;
+export const ModalCloseButton = styled.button`
+  padding: 10px;
+  border: none;
+  background: #000;
+  color: white;
+  margin-left: auto;
+`;
+
 export const ShareModal = styled.div`
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
 `;
@@ -151,6 +162,7 @@ export const Heading = styled.h2`
   font-size: 3.6rem;
   letter-spacing: 0.2rem;
   text-transform: uppercase;
+  margin-top: 0;
 `;
 
 export const Row = styled.div`
