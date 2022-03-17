@@ -2,15 +2,21 @@ import styled from 'styled-components';
 
 export const Header = styled.header`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   height: 50px;
   width: 100%;
   border-bottom: 1px solid #3a3a3c;
   font-weight: 700;
-  font-size: 3.6rem;
+  font-size: 1rem;
   letter-spacing: 0.2rem;
   text-transform: uppercase;
+`;
+
+export const Button = styled.button`
+  border: none;
+  background: none;
+  margin: 0 20px;
 `;
 
 export const Game = styled.div`
@@ -58,21 +64,21 @@ export const Tile = styled.div`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid #3a3a3c;
-  font-size: 2.5rem;
+  border: 2px solid #787c7e;
+  font-size: 2rem;
   font-weight: bold;
-  line-height: 2.5rem;
+  line-height: 2rem;
   text-transform: uppercase;
   transition: background-color 0.3s;
   ${({ hint }) => {
     if (hint === 'green') {
-      return `background-color: #6aaa64;`;
+      return `background-color: #6aaa64; color:white;`;
     }
     if (hint === 'yellow') {
-      return `background-color: #b59f3b;`;
+      return `background-color: #c9b458;color:white;`;
     }
     if (hint === 'grey') {
-      return `background-color: #3a3a3c;`;
+      return `background-color: #787c7e;color:white;`;
     }
   }}
   user-select: none;
@@ -103,10 +109,10 @@ export const KeyboardButton = styled.button`
   ${({ item }) => (item ? `flex: ${item};` : `flex: 1;`)}
   border: 0;
   border-radius: 4px;
-  background-color: #818384;
+  background-color: #d3d6da;
   font-weight: bold;
   text-transform: uppercase;
-  color: #d7dadc;
+  color: #000;
   cursor: pointer;
   user-select: none;
   &:last-of-type {
@@ -114,13 +120,13 @@ export const KeyboardButton = styled.button`
   }
   ${({ type }) => {
     if (type === 'green') {
-      return `background-color: #6aaa64;`;
+      return `background-color: #6aaa64;color:white;`;
     }
     if (type === 'yellow') {
-      return `background-color: #b59f3b;`;
+      return `background-color: #b59f3b;color:white;`;
     }
     if (type === 'grey') {
-      return `background-color: #3a3a3c;`;
+      return `background-color: #3a3a3c;color:white;`;
     }
   }}
 `;
@@ -131,6 +137,8 @@ export const Flex = styled.div`
 
 export const ModalHeader = styled.header`
   display: flex;
+  position: absolute;
+  width:100%;
 `;
 export const ModalCloseButton = styled.button`
   padding: 10px;
@@ -142,6 +150,7 @@ export const ModalCloseButton = styled.button`
 
 export const ShareModal = styled.div`
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+  position: relative;
 `;
 
 export const ShareButton = styled.button`
@@ -159,7 +168,7 @@ export const Heading = styled.h2`
   border-bottom: 1px solid #3a3a3c;
   padding-bottom: 8px;
   font-weight: 700;
-  font-size: 3.6rem;
+  font-size: 2rem;
   letter-spacing: 0.2rem;
   text-transform: uppercase;
   margin-top: 0;

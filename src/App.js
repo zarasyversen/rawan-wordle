@@ -1,5 +1,6 @@
 import {
   Header,
+  Button,
   Game,
   GameSection,
   WordError,
@@ -17,7 +18,7 @@ import {
   ModalCloseButton,
   ShareButton,
 } from './styled';
-import { FaBackspace, FaTimes } from 'react-icons/fa';
+import { FaBackspace, FaTimes, FaCog } from 'react-icons/fa';
 import './App.css';
 import { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal';
@@ -73,6 +74,7 @@ function App() {
   const [presentLetters, setPresentLetters] = useState([]);
   const [absentLetters, setAbsentLetters] = useState([]);
   const [winner, setWinner] = useState(false);
+  const [loser, setLoser] = useState(false);
 
   let letterIndex = useRef(0);
   let round = useRef(0);
@@ -154,6 +156,7 @@ function App() {
     if (updatedMarkers[_round].every((guess) => guess === 'green')) {
       setMarkers(updatedMarkers);
       setWinner(true);
+      setLoser(false);
       win();
       return;
     }
@@ -187,6 +190,7 @@ function App() {
 
     if (round.current === allowedGuesses) {
       lose();
+      setLoser(true);
       setWinner(false);
       return;
     }
@@ -323,7 +327,6 @@ function App() {
       setWord = WORDS[Math.floor(Math.random() * WORDS.length)];
       localStorage.setItem("wordOfTheDay", setWord); 
     }
-
     selectedWord.current = setWord;
 
     document.addEventListener('keydown', handleKeyDown);
@@ -333,8 +336,10 @@ function App() {
 
   return (
     <>
-      <Header>WORDLE</Header>
-      
+      <Header>
+        <h1>Rawan's Wordle 💁‍♀️</h1>
+        <Button onClick={() => setModalVisible(true)}><FaCog /></Button>
+      </Header>
       <Game>
         <GameSection>
           {isErrorVisible && 
@@ -383,6 +388,7 @@ function App() {
               bottom: 'auto',
               marginRight: '-50%',
               transform: 'translate(-50%, -50%)',
+              width:'80%',
             },
           }}
           contentLabel="Share"
@@ -394,29 +400,39 @@ function App() {
                 <FaTimes />
               </ModalCloseButton>
             </ModalHeader>
-            {winner ? 
+            {winner && 
               <>
-              <Heading>You win!</Heading>
+                <Heading>🤓 You win!</Heading>
+                <Row>
+                  <ShareButton onClick={startNewGame}>Get a new word</ShareButton>
+                  <ShareButton onClick={copyMarkers} disabled={isShared}>
+                    {isShared ? 'Copied!' : 'Share'}
+                  </ShareButton>
+                </Row>
+              </>
+            }
+            {loser && 
+             <>
+              <Heading>😢 You lose!</Heading>
               <Row>
-                <h3>Share</h3>
+                <h3>Correct word was {selectedWord.current}</h3>
+              </Row>
+              <Row>
+                <ShareButton onClick={startNewGame}>Get a new word</ShareButton>
                 <ShareButton onClick={copyMarkers} disabled={isShared}>
-                  {isShared ? 'Copied!' : 'Share'}
+                    {isShared ? 'Copied!' : 'Share'}
                 </ShareButton>
               </Row>
-              <Row>
-                <button onClick={startNewGame}>Get a new word</button>
+             </>
+            }
+            {!winner && !loser && 
+              <>
+                <Heading>😢 Stuck?</Heading>
+                <Row>
+                <ShareButton onClick={startNewGame}>Get a new word</ShareButton>
               </Row>
               </>
-            : <>
-            <Heading>You lose!</Heading>
-            <Row>
-              <h3>Correct word was {selectedWord.current}</h3>
-            </Row>
-            <Row>
-              <button onClick={startNewGame}>Get a new word</button>
-            </Row>
-            </>}
-            
+            }
           </ShareModal>
         </Modal>
       </div>
