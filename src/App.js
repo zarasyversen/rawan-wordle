@@ -266,8 +266,8 @@ function App() {
     enterGuess(pressedKey);
   };
 
-  const copyMarkers = () => {
-    let shareText = `Wordle ${getDayOfYear()}`;
+  const copyMarkers = async () => {
+    let shareText = `Rawan's Wordle ${getDayOfYear()}`;
     let shareGuesses = '';
 
     const amountOfGuesses = Object.entries(markers)
@@ -293,7 +293,16 @@ function App() {
     shareText += ` ${amountOfGuesses.length}/6\n${shareGuesses}`;
 
     navigator.clipboard.writeText(shareText);
-    setIsShared(true);
+
+    try {
+      await navigator.share(shareText)
+      console.log('share');
+    } catch(err) {
+      console.log('cant share');
+      // setIsShared(true);
+      navigator.clipboard.writeText(shareText);
+    }
+   
   };
 
   const handleKeyDown = (e) => {
@@ -405,8 +414,8 @@ function App() {
                 <Heading>🤓 You win!</Heading>
                 <Row>
                   <ShareButton onClick={startNewGame}>Get a new word</ShareButton>
-                  <ShareButton onClick={copyMarkers} disabled={isShared}>
-                    {isShared ? 'Copied!' : 'Share'}
+                  <ShareButton onClick={copyMarkers}>
+                    Share
                   </ShareButton>
                 </Row>
               </>
@@ -419,8 +428,8 @@ function App() {
               </Row>
               <Row>
                 <ShareButton onClick={startNewGame}>Get a new word</ShareButton>
-                <ShareButton onClick={copyMarkers} disabled={isShared}>
-                    {isShared ? 'Copied!' : 'Share'}
+                <ShareButton onClick={copyMarkers}>
+                    Share
                 </ShareButton>
               </Row>
              </>
