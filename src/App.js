@@ -45,6 +45,15 @@ const newGame = {
   5: Array.from({ length: wordLength }).fill(''),
 };
 
+const initialState = {
+  0: Array.from({ length: wordLength }).fill(''),
+  1: Array.from({ length: wordLength }).fill(''),
+  2: Array.from({ length: wordLength }).fill(''),
+  3: Array.from({ length: wordLength }).fill(''),
+  4: Array.from({ length: wordLength }).fill(''),
+  5: Array.from({ length: wordLength }).fill(''),
+};
+
 const fetchWord = (word) => {
   return fetch(`${API_URL}/${word}`, {
     method: 'GET',
@@ -55,18 +64,8 @@ const fetchWord = (word) => {
 };
 
 function App() {
-  const wordOfTheDay = 'money';
-  // const wordOfTheDay = WORDS[Math.floor(Math.random() * WORDS.length)];
-
   const [guesses, setGuesses] = useState({ ...newGame });
-  const [markers, setMarkers] = useState({
-    0: Array.from({ length: wordLength }).fill(''),
-    1: Array.from({ length: wordLength }).fill(''),
-    2: Array.from({ length: wordLength }).fill(''),
-    3: Array.from({ length: wordLength }).fill(''),
-    4: Array.from({ length: wordLength }).fill(''),
-    5: Array.from({ length: wordLength }).fill(''),
-  });
+  const [markers, setMarkers] = useState({ ...initialState });
   const [isModalVisible, setModalVisible] = useState(false);
   const [isShared, setIsShared] = useState(false);
   const [isErrorVisible, setErrorVisible] = useState(false);
@@ -77,6 +76,47 @@ function App() {
 
   let letterIndex = useRef(0);
   let round = useRef(0);
+  let selectedWord = useRef(0);
+
+  const getNewWordOfTheDay = () => {
+    let word = WORDS[Math.floor(Math.random() * WORDS.length)];
+    localStorage.setItem('wordOfTheDay', word);
+    return word;
+  }
+
+  const startNewGame = () => {
+    document.addEventListener('keydown', handleKeyDown);
+
+    letterIndex.current = 0;
+    round.current = 0;
+
+    setModalVisible(false);
+
+    const newWord = getNewWordOfTheDay();
+    selectedWord.current = newWord;
+
+    setCorrectLetters([]);
+    setPresentLetters([]);
+    setAbsentLetters([]);
+
+    let newGuesses = guesses;
+    Object.values(newGuesses).forEach((row, index) => {
+      let currentRow = {...newGuesses[index]};
+      currentRow = ['', '', '', '', ''];
+      newGuesses[index] = currentRow;
+    });
+
+    setGuesses(newGuesses);
+
+    let newMarkers = markers;
+    Object.values(newMarkers).forEach((row, index) => {
+      let currentRow = {...newMarkers[index]};
+      currentRow = ['', '', '', '', ''];
+      newMarkers[index] = currentRow;
+    });
+
+    setMarkers(newMarkers);
+  }
 
   const win = () => {
     document.removeEventListener('keydown', handleKeyDown);
@@ -93,9 +133,8 @@ function App() {
     const updatedMarkers = {
       ...markers,
     };
-
-    const tempWord = wordOfTheDay.split('');
-
+  
+    const tempWord = (selectedWord.current).split('');
     const leftoverIndices = [];
 
     // Prioritize the letters in the correct spot
@@ -184,8 +223,6 @@ function App() {
   };
 
   const enterGuess = async (pressedKey) => {
-  
-
     if (pressedKey === 'enter' && !guesses[round.current].includes('')) {
       const validWord = await fetchWord(guesses[round.current].join(''));
       if (validWord) {
@@ -230,9 +267,9 @@ function App() {
     let shareGuesses = '';
 
     const amountOfGuesses = Object.entries(markers)
-      .filter(([_, guesses]) => !guesses.includes(''))
+      .filter(([index, guesses]) => !guesses.includes(''))
       .map((round) => {
-        const [_, guesses] = round;
+        const [index, guesses] = round;
 
         guesses.forEach((guess) => {
           if (guess === 'green') {
@@ -279,6 +316,15 @@ function App() {
 
   useEffect(() => {
     Modal.setAppElement('#share');
+    
+    const savedWord = localStorage.getItem("wordOfTheDay");
+    let setWord = savedWord;
+    if (!setWord) {
+      setWord = WORDS[Math.floor(Math.random() * WORDS.length)];
+      localStorage.setItem("wordOfTheDay", setWord); 
+    }
+
+    selectedWord.current = setWord;
 
     document.addEventListener('keydown', handleKeyDown);
 
@@ -357,13 +403,20 @@ function App() {
                   {isShared ? 'Copied!' : 'Share'}
                 </ShareButton>
               </Row>
+              <Row>
+                <button onClick={startNewGame}>Get a new word</button>
+              </Row>
               </>
             : <>
             <Heading>You lose!</Heading>
             <Row>
-              <h3>Correct word was {wordOfTheDay.toUpperCase()}</h3>
+              <h3>Correct word was {selectedWord.current}</h3>
+            </Row>
+            <Row>
+              <button onClick={startNewGame}>Get a new word</button>
             </Row>
             </>}
+            
           </ShareModal>
         </Modal>
       </div>

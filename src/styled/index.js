@@ -17,7 +17,7 @@ export const Game = styled.div`
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
-  height: calc(100vh - 50px);
+  min-height: calc(100vh - 50px);
   display: flex;
   flex-direction: column;
 `;
@@ -46,8 +46,8 @@ export const TileContainer = styled.div`
   grid-gap: 5px;
   padding: 10px;
   box-sizing: border-box;
-  width: 350px;
-  height: 420px;
+  width: 300px;
+  height: 360px;
 `;
 export const TileRow = styled.div`
   display: grid;
@@ -59,9 +59,9 @@ export const Tile = styled.div`
   justify-content: center;
   align-items: center;
   border: 2px solid #3a3a3c;
-  font-size: 3.2rem;
+  font-size: 2.5rem;
   font-weight: bold;
-  line-height: 3.2rem;
+  line-height: 2.5rem;
   text-transform: uppercase;
   transition: background-color 0.3s;
   ${({ hint }) => {
