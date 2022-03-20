@@ -54,6 +54,11 @@ export const TileContainer = styled.div`
   box-sizing: border-box;
   width: 300px;
   height: 360px;
+
+  @media(max-height:600px) {
+    width: 250px;
+    height: 300px;
+  }
 `;
 export const TileRow = styled.div`
   display: grid;
@@ -82,6 +87,11 @@ export const Tile = styled.div`
     }
   }}
   user-select: none;
+
+  @media(max-height:600px) {
+    font-size: 1rem;
+    line-height: 1rem;
+  }
 `;
 
 export const KeyboardSection = styled.section`
